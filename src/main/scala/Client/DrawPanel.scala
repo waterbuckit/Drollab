@@ -3,7 +3,6 @@ package Client
 import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Graphics, Graphics2D, Point}
 
-import CanvasActions.CanvasAction
 import javax.swing.JPanel
 
 class DrawPanel extends JPanel {
@@ -51,7 +50,7 @@ class DrawPanel extends JPanel {
       val index = ((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
       indexTest(index._1)(index._2) = Color.GREEN
       repaint()
-      ClientMain.sendAction(new CanvasActions.PixelChangedAction(index._1, index._2))
+      ClientMain.sendAction(new CanvasActions.PixelChangedAction(index._1, index._2, Color.GREEN))
       println("Index = (" + index._1 + ")(" + index._2 + ") Clicked: " + e.getPoint.toString)
     }
   }

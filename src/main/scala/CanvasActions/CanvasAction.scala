@@ -4,7 +4,7 @@ import java.awt.Color
 
 trait CanvasAction extends Serializable {
 
-  def userID: String = _
+  var userID : String
 
   override def toString: String = super.toString
 
@@ -16,13 +16,15 @@ case class MessageSentAction(messageString: String) extends CanvasAction {
 
   override def applyAction(bufferedImage: Array[Array[Color]]): Unit = ???
 
+  override var userID: String = _
 }
 
-case class PixelChangedAction(xChanged: Int, yChanged: Int) extends CanvasAction {
+case class PixelChangedAction(xChanged: Int, yChanged: Int, colorChanged : Color) extends CanvasAction {
   override def toString: String = xChanged + ", " + yChanged
 
   override def applyAction(bufferedImage: Array[Array[Color]]): Unit = {
-
+    bufferedImage(xChanged)(yChanged) = colorChanged
   }
 
+  override var userID: String = _
 }

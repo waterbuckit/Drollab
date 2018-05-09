@@ -9,15 +9,16 @@ object ClientMain {
 
   var socket : Socket = new Socket("localhost", 25565)
   val outputStream : ObjectOutputStream = new ObjectOutputStream(socket.getOutputStream)
+  val userID : String = "Test2"
 
   def main(args: Array[String]): Unit = {
-    val userID : String = "Test1"
     outputStream.writeObject(userID)
     val client : Client = new Client(new ObjectInputStream(socket.getInputStream))
     client.frame.setVisible(true)
   }
 
   def sendAction(canvasAction : CanvasAction) : Unit = {
+    canvasAction.userID = userID
     outputStream.writeObject(canvasAction)
     outputStream.flush()
   }

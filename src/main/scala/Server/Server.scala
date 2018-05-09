@@ -15,7 +15,7 @@ class Server(portArg: Int) {
   def arbitrateMessage(action: CanvasAction): Unit = {
     println(action)
     this.users.foreach(user => if (user.userID != action.userID)
-      user.outputStream.writeObject("Action received"))
+      user.outputStream.writeObject(action))
   }
 
   def makeConnections(): Unit = {

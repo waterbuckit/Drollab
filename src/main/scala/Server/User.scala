@@ -9,6 +9,7 @@ class User(socket: Socket, serverSocket: ServerSocket, server: Server) {
   val inputStream = new ObjectInputStream(socket.getInputStream)
   val outputStream = new ObjectOutputStream(socket.getOutputStream)
   val userID = inputStream.readObject().asInstanceOf[String]
+  println("New user: " + userID)
   val userThread: Thread = new Thread(new IncomingThread(inputStream, server))
 
   this.userThread.start()
@@ -30,6 +31,8 @@ class User(socket: Socket, serverSocket: ServerSocket, server: Server) {
 
 class IncomingThread(inputStream: ObjectInputStream, server: Server) extends Runnable {
   override def run(): Unit = {
-    server.arbitrateMessage(inputStream.readObject().asInstanceOf[CanvasAction])
+    while(true){
+      server.arbitrateMessage(inputStream.readObject().asInstanceOf[CanvasAction])
+    }
   }
 }
