@@ -12,9 +12,10 @@ class Server(portArg: Int) {
   val serverSocket: ServerSocket = new ServerSocket(portArg)
   val users: ListBuffer[User] = ListBuffer()
 
-  def arbitrateMessage(action: CanvasAction[Any]): Unit = {
+  def arbitrateMessage(action: CanvasAction): Unit = {
     println(action)
-//    this.users.foreach(user => user.outputStream.writeObject("Action received"))
+    this.users.foreach(user => if (user.userID != action.userID)
+      user.outputStream.writeObject("Action received"))
   }
 
   def makeConnections(): Unit = {

@@ -1,10 +1,11 @@
 package Client
 
 import java.awt.Dimension
+import java.io.ObjectInputStream
 
-import javax.swing.JFrame
+import javax.swing.{JFrame, JPanel}
 
-class Client {
+class Client(inputStream : ObjectInputStream) {
   val WIDTH : Int = 510
   val HEIGHT : Int = 530
 
@@ -16,5 +17,11 @@ class Client {
   frame.add(drawPanel)
   frame.pack()
   frame.setSize(frame.getPreferredSize)
-
+  val clientThread : Thread = new Thread(new ClientThread(inputStream, drawPanel))
+  clientThread.start()
+}
+class ClientThread(inputStream : ObjectInputStream, panel : DrawPanel) extends Runnable {
+  override def run(): Unit = {
+    inputStream.readObject().asInstanceOf[CanvasActions.CanvasAction].applyAction(panel.indexTest)
+  }
 }

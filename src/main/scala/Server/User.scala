@@ -8,7 +8,8 @@ import CanvasActions.CanvasAction
 class User(socket: Socket, serverSocket: ServerSocket, server: Server) {
   val inputStream = new ObjectInputStream(socket.getInputStream)
   val outputStream = new ObjectOutputStream(socket.getOutputStream)
-  val userThread: Thread = new Thread(new ClientThread(inputStream, server))
+  val userID = inputStream.readObject().asInstanceOf[String]
+  val userThread: Thread = new Thread(new IncomingThread(inputStream, server))
 
   this.userThread.start()
 
@@ -21,14 +22,14 @@ class User(socket: Socket, serverSocket: ServerSocket, server: Server) {
     server.users.-=(this)
   }
 
-  def sendMessage(canvasAction: CanvasAction[Any]): Unit = {
+  def sendMessage(canvasAction: CanvasAction): Unit = {
     this.outputStream.writeObject(canvasAction)
     this.outputStream.flush()
   }
 }
 
-class ClientThread(inputStream: ObjectInputStream, server: Server) extends Runnable {
+class IncomingThread(inputStream: ObjectInputStream, server: Server) extends Runnable {
   override def run(): Unit = {
-    server.arbitrateMessage(inputStream.readObject().asInstanceOf[CanvasAction[Any]])
+    server.arbitrateMessage(inputStream.readObject().asInstanceOf[CanvasAction])
   }
 }
