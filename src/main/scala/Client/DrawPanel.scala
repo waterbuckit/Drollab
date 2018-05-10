@@ -1,13 +1,13 @@
 package Client
 
-import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.event.{MouseAdapter, MouseEvent, MouseWheelEvent}
 import java.awt.{Color, Graphics, Graphics2D, Point}
 
 import javax.swing.JPanel
 
 class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
-  val SCALE_FACTOR: Int = 30
+  var SCALE_FACTOR: Int = 30
   val pixelsMem = pixels
   var offsetX = 0
   var offsetY = 0
@@ -15,6 +15,7 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
   val mouseEventHandler: MouseEventHandler = new MouseEventHandler
   this.addMouseListener(mouseEventHandler)
   this.addMouseMotionListener(mouseEventHandler)
+  this.addMouseWheelListener(mouseEventHandler)
 
   override def paintComponent(g: Graphics): Unit = {
     super.paintComponent(g)
@@ -33,14 +34,19 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
     override def mousePressed(e: MouseEvent): Unit = {
       println("pressed")
-      this.offsetPoint = e.getPoint
+      offsetPoint.setLocation(e.getPoint)
     }
 
+    override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
+      println("MousewheelMoved")
+      SCALE_FACTOR += e.getWheelRotation
+      repaint()
+    }
     override def mouseDragged(e: MouseEvent): Unit = {
       println("dragged")
       offsetX = (e.getX - offsetPoint.x)/SCALE_FACTOR
       offsetY = (e.getY - offsetPoint.y)/SCALE_FACTOR
-      println("OFFSET: " + offsetX + "," + offsetY + " MOUSEPOS: " + e.getX + "," + e.getY)
+      println("OFFSET: " + offsetX + "," + offsetY + " MOUSEPOS: " + e.getX + "," + e.getY + "OFFSETPOINT: " + offsetPoint.x +", "+ offsetPoint.y)
       repaint()
     }
     override def mouseClicked(e: MouseEvent): Unit = {
