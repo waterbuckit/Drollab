@@ -31,17 +31,18 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
     private var offsetPoint: Point = new Point()
 
-    override def mouseDragged(e: MouseEvent): Unit = {
-      offsetX = (e.getX - offsetPoint.x)
-      offsetY = (e.getY - offsetPoint.y)
-      println("OFFSET: " + offsetX + "," + offsetY + " MOUSEPOS: " + e.getX + "," + e.getY)
-      repaint()
-    }
-
     override def mousePressed(e: MouseEvent): Unit = {
+      println("pressed")
       this.offsetPoint = e.getPoint
     }
 
+    override def mouseDragged(e: MouseEvent): Unit = {
+      println("dragged")
+      offsetX = (e.getX - offsetPoint.x)/SCALE_FACTOR
+      offsetY = (e.getY - offsetPoint.y)/SCALE_FACTOR
+      println("OFFSET: " + offsetX + "," + offsetY + " MOUSEPOS: " + e.getX + "," + e.getY)
+      repaint()
+    }
     override def mouseClicked(e: MouseEvent): Unit = {
       val index = ((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
       pixels(index._1)(index._2) = Color.GREEN

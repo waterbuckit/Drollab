@@ -9,7 +9,7 @@ object ClientMain {
 
   var socket : Socket = new Socket("localhost", 25565)
   val outputStream : ObjectOutputStream = new ObjectOutputStream(socket.getOutputStream)
-  val userID : String = "Test5"
+  val userID : String = "Test8"
 
   def main(args: Array[String]): Unit = {
     outputStream.writeObject(userID)
