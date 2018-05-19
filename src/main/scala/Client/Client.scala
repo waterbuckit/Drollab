@@ -3,6 +3,7 @@ package Client
 import java.awt.{Color, Dimension}
 import java.io.{IOException, ObjectInputStream}
 
+import CanvasActions.CanvasAction
 import javax.swing.{JFrame, JPanel}
 
 class Client(inputStream: ObjectInputStream) {
@@ -24,10 +25,19 @@ class Client(inputStream: ObjectInputStream) {
 }
 
 class ClientThread(inputStream: ObjectInputStream, panel: DrawPanel) extends Runnable {
+
+
+  def matchOnAction(action: CanvasAction) : Unit = {
+    action match {
+      case CanvasActions.UserCountChangeAction(count) => ClientMain.userCount = count
+      case CanvasActions.PixelChangedAction(_, _, _) => action.applyAction(panel.pixelsMem)
+    }
+  }
+
   override def run(): Unit = {
     while (true) {
       try {
-        inputStream.readObject().asInstanceOf[CanvasActions.CanvasAction].applyAction(panel.pixelsMem)
+        matchOnAction(inputStream.readObject().asInstanceOf[CanvasActions.CanvasAction])
         panel.repaint()
       } catch {
         case ioe : IOException => {

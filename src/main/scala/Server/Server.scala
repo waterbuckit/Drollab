@@ -20,7 +20,7 @@ class Server(portArg: Int) {
     }
   }
 
-  def updateServerCanvas(x: Int, y: Int, colorChanged: Color) : Unit = {
+  def updateServerCanvas(x: Int, y: Int, colorChanged: Color): Unit = {
     this.pixels(x)(y) = colorChanged
   }
 
@@ -28,8 +28,8 @@ class Server(portArg: Int) {
     println(action)
 
     action match {
-      case CanvasActions.PixelChangedAction(x,y,colorChanged) => updateServerCanvas(x, y, colorChanged)
-      case CanvasActions.MessageSentAction(messageString) => println("MESSAGE SENT TEST: "+ messageString)
+      case CanvasActions.PixelChangedAction(x, y, colorChanged) => updateServerCanvas(x, y, colorChanged)
+      case CanvasActions.UserCountChangeAction(count) => println("Current user count: " + count)
     }
 
     this.users.foreach(user => if (user.userID != action.userID)
@@ -42,6 +42,7 @@ class Server(portArg: Int) {
       val client: Socket = this.serverSocket.accept()
       println("Connected to: " + client.getInetAddress.getHostAddress)
       this.users.+=(new User(client, this.serverSocket, this))
+      arbitrateMessage(new CanvasActions.UserCountChangeAction(this.users.length))
       println("Current users: \n" + getUsers())
     }
   }
@@ -56,6 +57,7 @@ class Server(portArg: Int) {
   def removeUser(user: User): Unit = {
     user.stopThread()
     this.users -= user
+    arbitrateMessage(new CanvasActions.UserCountChangeAction(this.users.length))
     println("Current users: \n" + getUsers())
   }
 }
