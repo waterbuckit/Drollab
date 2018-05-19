@@ -20,8 +20,18 @@ class Server(portArg: Int) {
     }
   }
 
+  def updateServerCanvas(x: Int, y: Int, colorChanged: Color) : Unit = {
+    this.pixels(x)(y) = colorChanged
+  }
+
   def arbitrateMessage(action: CanvasAction): Unit = {
     println(action)
+
+    action match {
+      case CanvasActions.PixelChangedAction(x,y,colorChanged) => updateServerCanvas(x, y, colorChanged)
+      case CanvasActions.MessageSentAction(messageString) => println("MESSAGE SENT TEST: "+ messageString)
+    }
+
     this.users.foreach(user => if (user.userID != action.userID)
       user.outputStream.writeObject(action))
   }
