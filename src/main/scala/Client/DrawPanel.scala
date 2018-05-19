@@ -13,6 +13,7 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
   var offsetY = 0
   var mousePos: Point = new Point();
   val mouseEventHandler: MouseEventHandler = new MouseEventHandler
+  val selectedColor : Color = Color.BLACK
   this.addMouseListener(mouseEventHandler)
   this.addMouseMotionListener(mouseEventHandler)
   this.addMouseWheelListener(mouseEventHandler)
@@ -35,6 +36,9 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
   }
 
   def drawUI(g2d: Graphics2D): Unit = {
+    g2d.setColor(new Color(selectedColor.getRed, selectedColor.getGreen, selectedColor.getBlue,200))
+    g2d.fillRect((mousePos.x + offsetX) * this.SCALE_FACTOR, (mousePos.y + offsetY) * this.SCALE_FACTOR, this.SCALE_FACTOR,
+      this.SCALE_FACTOR)
     g2d.setFont(new Font("Roboto Mono for Powerline", Font.PLAIN, 24))
     g2d.setStroke(new BasicStroke(50.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
     g2d.setColor(new Color(Color.BLACK.getRed, Color.BLACK.getGreen, Color.BLACK.getBlue, 200))
@@ -80,9 +84,9 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
     override def mouseClicked(e: MouseEvent): Unit = {
       val index = ((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
-      pixels(index._1)(index._2) = Color.GREEN
+      pixels(index._1)(index._2) = selectedColor
       repaint()
-      ClientMain.sendAction(new CanvasActions.PixelChangedAction(index._1, index._2, Color.GREEN))
+      ClientMain.sendAction(new CanvasActions.PixelChangedAction(index._1, index._2, selectedColor))
       println("Index = (" + index._1 + ")(" + index._2 + ") Clicked: " + e.getPoint)
     }
   }

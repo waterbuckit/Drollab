@@ -15,6 +15,7 @@ object ClientMain {
 
 
   def main(args: Array[String]): Unit = {
+    System.setProperty("sun.java2d.opengl", "true")
     outputStream.writeObject(userID)
     val client: Client = new Client(new ObjectInputStream(socket.getInputStream))
     client.frame.setVisible(true)
