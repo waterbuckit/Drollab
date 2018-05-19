@@ -27,23 +27,24 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     for (y <- pixels.indices) {
       for (x <- pixels.indices) {
         g2d.setColor(this.pixels(x)(y))
-        g2d.fillRect((x + offsetX) * this.SCALE_FACTOR, (y + offsetY) * this.SCALE_FACTOR, this.SCALE_FACTOR, this.SCALE_FACTOR)
+        g2d.fillRect((x + offsetX) * this.SCALE_FACTOR, (y + offsetY) * this.SCALE_FACTOR, this.SCALE_FACTOR,
+          this.SCALE_FACTOR)
       }
     }
     drawUI(g2d)
   }
 
-
   def drawUI(g2d: Graphics2D): Unit = {
+    g2d.setFont(new Font("Roboto Mono for Powerline", Font.PLAIN, 24))
     g2d.setStroke(new BasicStroke(50.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
     g2d.setColor(new Color(Color.BLACK.getRed, Color.BLACK.getGreen, Color.BLACK.getBlue, 200))
-    // Users
-    g2d.drawLine(40, this.getHeight - 95, 60, this.getHeight - 95)
-    // Mouse position in canvas.
-    g2d.drawLine(40, this.getHeight - 40, 60, this.getHeight - 40)
+    g2d.drawLine(40, this.getHeight - 95, 40 + g2d.getFontMetrics.stringWidth(ClientMain.getUserCount.toString),
+      this.getHeight - 95)
+    g2d.drawLine(40, this.getHeight - 40, 40 + g2d.getFontMetrics.stringWidth("(" + mousePos.x + ", "
+      + mousePos.y + ")"), this.getHeight - 40)
     g2d.setColor(Color.WHITE)
-    g2d.drawString(ClientMain.getUserCount.toString, 50, this.getHeight - 95)
-    g2d.drawString("(" + mousePos.x + ", " + mousePos.y + ")", 50, this.getHeight - 40)
+    g2d.drawString(ClientMain.getUserCount.toString, 40, this.getHeight - 87)
+    g2d.drawString("(" + mousePos.x + ", " + mousePos.y + ")", 40, this.getHeight - 33)
   }
 
   class MouseEventHandler extends MouseAdapter {
@@ -65,10 +66,6 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
       val offsetXTemp: Double = (e.getPoint.getX - mousePressOffset.getX) / SCALE_FACTOR
       val offsetYTemp: Double = (e.getPoint.getY - mousePressOffset.getY) / SCALE_FACTOR
 
-      println(offsetXTemp + "," + offsetYTemp)
-      println("PRINT 1 OFFSET: " + offsetX + "," + offsetY + " MOUSEPOS: " + e.getX + "," + e.getY + "OFFSETPOINT: " + mousePressOffset.x + ", " + mousePressOffset.y)
-      mousePressOffset.setLocation(e.getPoint)
-
       offsetX = offsetXTemp.toInt
       offsetY = offsetYTemp.toInt
       println("PRINT 2 OFFSET: " + offsetX + "," + offsetY + " MOUSEPOS: " + e.getX + "," + e.getY + "OFFSETPOINT: " + mousePressOffset.x + ", " + mousePressOffset.y)
@@ -77,6 +74,7 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
       SCALE_FACTOR += e.getWheelRotation
+      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
       repaint()
     }
 
