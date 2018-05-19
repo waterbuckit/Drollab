@@ -13,7 +13,7 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
   var offsetY = 0
   var mousePos: Point = new Point();
   val mouseEventHandler: MouseEventHandler = new MouseEventHandler
-  val selectedColor : Color = Color.BLACK
+  val selectedColor: Color = Color.BLACK
   this.addMouseListener(mouseEventHandler)
   this.addMouseMotionListener(mouseEventHandler)
   this.addMouseWheelListener(mouseEventHandler)
@@ -28,16 +28,18 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     for (y <- pixels.indices) {
       for (x <- pixels.indices) {
         g2d.setColor(this.pixels(x)(y))
-        g2d.fillRect((x + offsetX) * this.SCALE_FACTOR, (y + offsetY) * this.SCALE_FACTOR, this.SCALE_FACTOR,
+        g2d.fillRect((x) * this.SCALE_FACTOR + offsetX, (y) * this.SCALE_FACTOR + offsetY, this.SCALE_FACTOR,
           this.SCALE_FACTOR)
+        //        g2d.fillRect((x + offsetX) * this.SCALE_FACTOR, (y + offsetY) * this.SCALE_FACTOR, this.SCALE_FACTOR,
+        //          this.SCALE_FACTOR)
       }
     }
     drawUI(g2d)
   }
 
   def drawUI(g2d: Graphics2D): Unit = {
-    g2d.setColor(new Color(selectedColor.getRed, selectedColor.getGreen, selectedColor.getBlue,200))
-    g2d.fillRect((mousePos.x + offsetX) * this.SCALE_FACTOR, (mousePos.y + offsetY) * this.SCALE_FACTOR, this.SCALE_FACTOR,
+    g2d.setColor(new Color(selectedColor.getRed, selectedColor.getGreen, selectedColor.getBlue, 200))
+    g2d.fillRect(mousePos.x * this.SCALE_FACTOR + offsetX, mousePos.y* this.SCALE_FACTOR + offsetY, this.SCALE_FACTOR,
       this.SCALE_FACTOR)
     g2d.setFont(new Font("Roboto Mono for Powerline", Font.PLAIN, 24))
     g2d.setStroke(new BasicStroke(50.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
@@ -56,7 +58,8 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     private val mousePressOffset: Point = new Point()
 
     override def mouseMoved(e: MouseEvent): Unit = {
-      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      //      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
       repaint()
     }
 
@@ -67,23 +70,26 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
     override def mouseDragged(e: MouseEvent): Unit = {
       println("dragged")
-      val offsetXTemp: Double = (e.getPoint.getX - mousePressOffset.getX) / SCALE_FACTOR
-      val offsetYTemp: Double = (e.getPoint.getY - mousePressOffset.getY) / SCALE_FACTOR
+      val offsetXTemp: Double = e.getPoint.getX - mousePressOffset.getX
+      val offsetYTemp: Double = e.getPoint.getY - mousePressOffset.getY
 
-      offsetX = offsetXTemp.toInt
-      offsetY = offsetYTemp.toInt
-      println("PRINT 2 OFFSET: " + offsetX + "," + offsetY + " MOUSEPOS: " + e.getX + "," + e.getY + "OFFSETPOINT: " + mousePressOffset.x + ", " + mousePressOffset.y)
+      mousePressOffset.setLocation(e.getPoint)
+
+      offsetX += offsetXTemp.toInt
+      offsetY += offsetYTemp.toInt
       repaint()
     }
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
       SCALE_FACTOR += e.getWheelRotation
-      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      //      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
       repaint()
     }
 
     override def mouseClicked(e: MouseEvent): Unit = {
-      val index = ((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      val index = ((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
+      //      val index = ((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
       pixels(index._1)(index._2) = selectedColor
       repaint()
       ClientMain.sendAction(new CanvasActions.PixelChangedAction(index._1, index._2, selectedColor))

@@ -11,7 +11,7 @@ object ClientMain {
   var socket: Socket = new Socket("localhost", 25566)
   var userCount: Int = 0;
   val outputStream: ObjectOutputStream = new ObjectOutputStream(socket.getOutputStream)
-  val userID: String = "Adam2"
+  val userID: String = "Adam1"
 
 
   def main(args: Array[String]): Unit = {
