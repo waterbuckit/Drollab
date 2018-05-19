@@ -15,8 +15,9 @@ class Server(portArg: Int) {
   val pixels: Array[Array[Color]] = Array.ofDim[Color](50, 50)
   for (y <- pixels.indices) {
     for (x <- pixels.indices) {
-      this.pixels(x)(y) = new Color((Math.random() * 255).asInstanceOf[Int],
-        (Math.random() * 255).asInstanceOf[Int], (Math.random() * 255).asInstanceOf[Int])
+      this.pixels(x)(y) = Color.WHITE
+//      this.pixels(x)(y) = new Color((Math.random() * 255).asInstanceOf[Int],
+//        (Math.random() * 255).asInstanceOf[Int], (Math.random() * 255).asInstanceOf[Int])
     }
   }
 
