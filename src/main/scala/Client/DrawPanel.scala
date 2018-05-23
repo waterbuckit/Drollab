@@ -39,7 +39,7 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
   def drawUI(g2d: Graphics2D): Unit = {
     g2d.setColor(new Color(selectedColor.getRed, selectedColor.getGreen, selectedColor.getBlue, 200))
-    g2d.fillRect(mousePos.x * this.SCALE_FACTOR + offsetX, mousePos.y* this.SCALE_FACTOR + offsetY, this.SCALE_FACTOR,
+    g2d.fillRect(mousePos.x * this.SCALE_FACTOR + offsetX, mousePos.y * this.SCALE_FACTOR + offsetY, this.SCALE_FACTOR,
       this.SCALE_FACTOR)
     g2d.setFont(new Font("Roboto Mono for Powerline", Font.PLAIN, 24))
     g2d.setStroke(new BasicStroke(50.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
@@ -81,7 +81,15 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     }
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
-      SCALE_FACTOR += e.getWheelRotation
+      SCALE_FACTOR += e.getWheelRotation * -1
+      if (e.getWheelRotation < 0) {
+        offsetX -= (getWidth / 2) / SCALE_FACTOR
+        offsetY -= (getHeight / 2) / SCALE_FACTOR
+      } else {
+        offsetX += (getWidth / 2) / SCALE_FACTOR
+        offsetY += (getHeight / 2) / SCALE_FACTOR
+      }
+      println("SCALEFACTOR: " + SCALE_FACTOR + " OFFSET: " + offsetX + ", " + offsetY)
       //      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
       mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
       repaint()
