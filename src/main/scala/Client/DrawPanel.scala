@@ -31,8 +31,6 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
         g2d.setColor(this.pixels(x)(y))
         g2d.fillRect((x) * this.SCALE_FACTOR + offsetX, (y) * this.SCALE_FACTOR + offsetY, this.SCALE_FACTOR,
           this.SCALE_FACTOR)
-        //        g2d.fillRect((x + offsetX) * this.SCALE_FACTOR, (y + offsetY) * this.SCALE_FACTOR, this.SCALE_FACTOR,
-        //          this.SCALE_FACTOR)
       }
     }
     drawUI(g2d)
@@ -82,22 +80,28 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     }
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
-      val previousMid = ((getWidth / 2 - offsetX) / SCALE_FACTOR, (getHeight / 2 - offsetY) / SCALE_FACTOR)
-      println("PREV: " + previousMid._1 + "," + previousMid._2)
+      val previousMidValue = ((getWidth / 2 - offsetX) / SCALE_FACTOR , (getHeight / 2 - offsetX) / SCALE_FACTOR)
+      val prevScaleFactor = SCALE_FACTOR
+      //      val previousMid = ((getWidth / 2 - offsetX) / SCALE_FACTOR, (getHeight / 2 - offsetY) / SCALE_FACTOR)
+      //      println("PREV: " + previousMid._1 + "," + previousMid._2)
       SCALE_FACTOR += e.getWheelRotation * -1
-      println("CURRENT MID: " + (getWidth / 2 - offsetX) + "," + (getHeight / 2 - offsetY))
-      val midDiff = (previousMid._1 - ((getWidth / 2 - offsetX) / SCALE_FACTOR),
-        previousMid._2 - ((getHeight / 2 - offsetY) / SCALE_FACTOR))
-      println("DIFF: " + midDiff)
-      println("CURRENT OFFSET: " + offsetX + "," + offsetY)
-      //      newCalculatedMid = (midDiff._1 * SCALE_FACTOR + offsetX + (getWidth / 2 - offsetX), midDiff._2 * SCALE_FACTOR + offsetY + (getHeight / 2 - offsetY))
-      newCalculatedMid = (midDiff._1 * SCALE_FACTOR , midDiff._2 * SCALE_FACTOR)
-      println("NEW CALCULATED MID : " + newCalculatedMid + "INDEX: " + (newCalculatedMid._1 + (getWidth / 2 - offsetX) - offsetX) / SCALE_FACTOR +
-        "," + (newCalculatedMid._2 + (getHeight / 2 - offsetY) - offsetY) / SCALE_FACTOR)
-
-      if (midDiff._1 != 0) offsetX -= newCalculatedMid._1
-      if (midDiff._2 != 0) offsetY -= newCalculatedMid._2
-      println("NEW OFFSET: " + offsetX + "," + offsetY)
+      val newMid = (previousMidValue._1 * SCALE_FACTOR, previousMidValue._2 * SCALE_FACTOR)
+      val diff = ((previousMidValue._1 * prevScaleFactor) - newMid._1, (previousMidValue._2 * prevScaleFactor) - newMid._2)
+      offsetX += diff._1
+      offsetY += diff._2
+      //      println("CURRENT MID: " + (getWidth / 2 - offsetX) + "," + (getHeight / 2 - offsetY))
+      //      val midDiff = (previousMid._1 - ((getWidth / 2 - offsetX) / SCALE_FACTOR),
+      //        previousMid._2 - ((getHeight / 2 - offsetY) / SCALE_FACTOR))
+      //      println("DIFF: " + midDiff)
+      //      println("CURRENT OFFSET: " + offsetX + "," + offsetY)
+      //      //      newCalculatedMid = (midDiff._1 * SCALE_FACTOR + offsetX + (getWidth / 2 - offsetX), midDiff._2 * SCALE_FACTOR + offsetY + (getHeight / 2 - offsetY))
+      //      newCalculatedMid = (midDiff._1 * SCALE_FACTOR , midDiff._2 * SCALE_FACTOR)
+      //      println("NEW CALCULATED MID : " + newCalculatedMid + "INDEX: " + (newCalculatedMid._1 + (getWidth / 2 - offsetX) - offsetX) / SCALE_FACTOR +
+      //        "," + (newCalculatedMid._2 + (getHeight / 2 - offsetY) - offsetY) / SCALE_FACTOR)
+      //
+      //            if (midDiff._1 != 0) offsetX -= newCalculatedMid._1
+      //            if (midDiff._2 != 0) offsetY -= newCalculatedMid._2
+      //      println("NEW OFFSET: " + offsetX + "," + offsetY)
       //      if (e.getWheelRotation < 0) {
       //        offsetX -=
       //        offsetY -=
