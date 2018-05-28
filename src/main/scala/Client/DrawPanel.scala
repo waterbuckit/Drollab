@@ -7,6 +7,7 @@ import javax.swing.JPanel
 
 class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
+  var newCalculatedMid = (0, 0)
   var SCALE_FACTOR: Int = 30
   val pixelsMem = pixels
   var offsetX = 0
@@ -81,16 +82,29 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     }
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
+      val previousMid = ((getWidth / 2 - offsetX) / SCALE_FACTOR, (getHeight / 2 - offsetY) / SCALE_FACTOR)
+      println("PREV: " + previousMid._1 + "," + previousMid._2)
       SCALE_FACTOR += e.getWheelRotation * -1
-      if (e.getWheelRotation < 0) {
-        offsetX -= (getWidth / 2) / SCALE_FACTOR
-        offsetY -= (getHeight / 2) / SCALE_FACTOR
-      } else {
-        offsetX += (getWidth / 2) / SCALE_FACTOR
-        offsetY += (getHeight / 2) / SCALE_FACTOR
-      }
-      println("SCALEFACTOR: " + SCALE_FACTOR + " OFFSET: " + offsetX + ", " + offsetY)
-      //      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      println("CURRENT MID: " + (getWidth / 2 - offsetX) + "," + (getHeight / 2 - offsetY))
+      val midDiff = (previousMid._1 - ((getWidth / 2 - offsetX) / SCALE_FACTOR),
+        previousMid._2 - ((getHeight / 2 - offsetY) / SCALE_FACTOR))
+      println("DIFF: " + midDiff)
+      println("CURRENT OFFSET: " + offsetX + "," + offsetY)
+      //      newCalculatedMid = (midDiff._1 * SCALE_FACTOR + offsetX + (getWidth / 2 - offsetX), midDiff._2 * SCALE_FACTOR + offsetY + (getHeight / 2 - offsetY))
+      newCalculatedMid = (midDiff._1 * SCALE_FACTOR , midDiff._2 * SCALE_FACTOR)
+      println("NEW CALCULATED MID : " + newCalculatedMid + "INDEX: " + (newCalculatedMid._1 + (getWidth / 2 - offsetX) - offsetX) / SCALE_FACTOR +
+        "," + (newCalculatedMid._2 + (getHeight / 2 - offsetY) - offsetY) / SCALE_FACTOR)
+
+      if (midDiff._1 != 0) offsetX -= newCalculatedMid._1
+      if (midDiff._2 != 0) offsetY -= newCalculatedMid._2
+      println("NEW OFFSET: " + offsetX + "," + offsetY)
+      //      if (e.getWheelRotation < 0) {
+      //        offsetX -=
+      //        offsetY -=
+      //      } else {
+      //        offsetX +=
+      //        offsetY +=
+      //      }
       mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
       repaint()
     }
