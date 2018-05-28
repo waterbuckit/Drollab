@@ -63,12 +63,10 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     }
 
     override def mousePressed(e: MouseEvent): Unit = {
-      println("pressed at: " + e.getPoint)
       mousePressOffset.setLocation(e.getPoint)
     }
 
     override def mouseDragged(e: MouseEvent): Unit = {
-      println("dragged")
       val offsetXTemp: Double = e.getPoint.getX - mousePressOffset.getX
       val offsetYTemp: Double = e.getPoint.getY - mousePressOffset.getY
 
@@ -80,7 +78,8 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     }
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
-      val previousMidValue = ((getWidth / 2 - offsetX) / SCALE_FACTOR , (getHeight / 2 - offsetX) / SCALE_FACTOR)
+//      val previousMidValue = ((getWidth / 2 - offsetX) / SCALE_FACTOR , (getHeight / 2 - offsetY) / SCALE_FACTOR)
+      val previousMidValue = ((e.getX - offsetX) / SCALE_FACTOR , (e.getY - offsetY) / SCALE_FACTOR)
       val prevScaleFactor = SCALE_FACTOR
       //      val previousMid = ((getWidth / 2 - offsetX) / SCALE_FACTOR, (getHeight / 2 - offsetY) / SCALE_FACTOR)
       //      println("PREV: " + previousMid._1 + "," + previousMid._2)

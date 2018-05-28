@@ -7,8 +7,8 @@ import CanvasActions.CanvasAction
 import javax.swing.{JFrame, JPanel}
 
 class Client(inputStream: ObjectInputStream) {
-  val WIDTH: Int = 510
-  val HEIGHT: Int = 530
+  val WIDTH: Int = 800
+  val HEIGHT: Int = 800
   // get the current state of the array
   val currentPixels : Array[Array[Color]] = inputStream.readObject().asInstanceOf[Array[Array[Color]]]
 
