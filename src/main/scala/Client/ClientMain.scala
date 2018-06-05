@@ -8,11 +8,12 @@ import CanvasActions.CanvasAction
 object ClientMain {
 
 
-  var socket: Socket = new Socket("localhost", 25566)
+  val address : String = ""
+  val portNum : Int = 0
+  val socket: Socket = new Socket("localhost", 25566)
   var userCount: Int = 0;
   val outputStream: ObjectOutputStream = new ObjectOutputStream(socket.getOutputStream)
-  val userID: String = "Adam1"
-
+  val userID: String = "Adam2"
 
   def main(args: Array[String]): Unit = {
     System.setProperty("sun.java2d.opengl", "true")

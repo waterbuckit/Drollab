@@ -26,6 +26,7 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     super.paintComponent(g)
     val g2d: Graphics2D = g.asInstanceOf[Graphics2D]
     g2d.setRenderingHints(this.rh)
+    // Temporary code for drawing the board
     for (y <- pixels.indices) {
       for (x <- pixels.indices) {
         g2d.setColor(this.pixels(x)(y))
@@ -37,9 +38,11 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
   }
 
   def drawUI(g2d: Graphics2D): Unit = {
+    // draw the mouse position
     g2d.setColor(new Color(selectedColor.getRed, selectedColor.getGreen, selectedColor.getBlue, 200))
     g2d.fillRect(mousePos.x * this.SCALE_FACTOR + offsetX, mousePos.y * this.SCALE_FACTOR + offsetY, this.SCALE_FACTOR,
       this.SCALE_FACTOR)
+    // draw the user count and mouse location etc
     g2d.setFont(new Font("Roboto Mono for Powerline", Font.PLAIN, 24))
     g2d.setStroke(new BasicStroke(50.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
     g2d.setColor(new Color(Color.BLACK.getRed, Color.BLACK.getGreen, Color.BLACK.getBlue, 200))
@@ -57,8 +60,8 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     private val mousePressOffset: Point = new Point()
 
     override def mouseMoved(e: MouseEvent): Unit = {
-      //      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
-      mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
+      setMousePos(e)
+      println(e.getPoint + " " + mousePos)
       repaint()
     }
 
@@ -74,51 +77,35 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
       offsetX += offsetXTemp.toInt
       offsetY += offsetYTemp.toInt
+      println("OFFSET: " + offsetX + ", " + offsetY)
       repaint()
     }
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
-//      val previousMidValue = ((getWidth / 2 - offsetX) / SCALE_FACTOR , (getHeight / 2 - offsetY) / SCALE_FACTOR)
-      val previousMidValue = ((e.getX - offsetX) / SCALE_FACTOR , (e.getY - offsetY) / SCALE_FACTOR)
+      //      val previousMidValue = ((getWidth / 2 - offsetX) / SCALE_FACTOR , (getHeight / 2 - offsetY) / SCALE_FACTOR)
+      val previousMidValue = ((e.getX - offsetX) / SCALE_FACTOR, (e.getY - offsetY) / SCALE_FACTOR)
+      println(previousMidValue + "DETAILS: " + (previousMidValue._1 * SCALE_FACTOR) + "," + (previousMidValue._2 * SCALE_FACTOR))
       val prevScaleFactor = SCALE_FACTOR
-      //      val previousMid = ((getWidth / 2 - offsetX) / SCALE_FACTOR, (getHeight / 2 - offsetY) / SCALE_FACTOR)
-      //      println("PREV: " + previousMid._1 + "," + previousMid._2)
       SCALE_FACTOR += e.getWheelRotation * -1
       val newMid = (previousMidValue._1 * SCALE_FACTOR, previousMidValue._2 * SCALE_FACTOR)
       val diff = ((previousMidValue._1 * prevScaleFactor) - newMid._1, (previousMidValue._2 * prevScaleFactor) - newMid._2)
       offsetX += diff._1
       offsetY += diff._2
-      //      println("CURRENT MID: " + (getWidth / 2 - offsetX) + "," + (getHeight / 2 - offsetY))
-      //      val midDiff = (previousMid._1 - ((getWidth / 2 - offsetX) / SCALE_FACTOR),
-      //        previousMid._2 - ((getHeight / 2 - offsetY) / SCALE_FACTOR))
-      //      println("DIFF: " + midDiff)
-      //      println("CURRENT OFFSET: " + offsetX + "," + offsetY)
-      //      //      newCalculatedMid = (midDiff._1 * SCALE_FACTOR + offsetX + (getWidth / 2 - offsetX), midDiff._2 * SCALE_FACTOR + offsetY + (getHeight / 2 - offsetY))
-      //      newCalculatedMid = (midDiff._1 * SCALE_FACTOR , midDiff._2 * SCALE_FACTOR)
-      //      println("NEW CALCULATED MID : " + newCalculatedMid + "INDEX: " + (newCalculatedMid._1 + (getWidth / 2 - offsetX) - offsetX) / SCALE_FACTOR +
-      //        "," + (newCalculatedMid._2 + (getHeight / 2 - offsetY) - offsetY) / SCALE_FACTOR)
-      //
-      //            if (midDiff._1 != 0) offsetX -= newCalculatedMid._1
-      //            if (midDiff._2 != 0) offsetY -= newCalculatedMid._2
-      //      println("NEW OFFSET: " + offsetX + "," + offsetY)
-      //      if (e.getWheelRotation < 0) {
-      //        offsetX -=
-      //        offsetY -=
-      //      } else {
-      //        offsetX +=
-      //        offsetY +=
-      //      }
-      mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
+      // update the point at which to draw the mouse location.
+      setMousePos(e)
       repaint()
     }
 
     override def mouseClicked(e: MouseEvent): Unit = {
-      val index = ((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
-      //      val index = ((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      val index = (mousePos.x, mousePos.y)
       pixels(index._1)(index._2) = selectedColor
       repaint()
       ClientMain.sendAction(new CanvasActions.PixelChangedAction(index._1, index._2, selectedColor))
       println("Index = (" + index._1 + ")(" + index._2 + ") Clicked: " + e.getPoint)
+    }
+
+    def setMousePos(e: MouseEvent): Unit = {
+      mousePos.setLocation(((e.getPoint.x - offsetX).asInstanceOf[Double] / SCALE_FACTOR).floor, ((e.getPoint.y - offsetY).asInstanceOf[Double] / SCALE_FACTOR).floor)
     }
   }
 
