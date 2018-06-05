@@ -38,9 +38,11 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
   }
 
   def drawUI(g2d: Graphics2D): Unit = {
+    // draw the mouse position
     g2d.setColor(new Color(selectedColor.getRed, selectedColor.getGreen, selectedColor.getBlue, 200))
     g2d.fillRect(mousePos.x * this.SCALE_FACTOR + offsetX, mousePos.y * this.SCALE_FACTOR + offsetY, this.SCALE_FACTOR,
       this.SCALE_FACTOR)
+    // draw the user count and mouse location etc
     g2d.setFont(new Font("Roboto Mono for Powerline", Font.PLAIN, 24))
     g2d.setStroke(new BasicStroke(50.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND))
     g2d.setColor(new Color(Color.BLACK.getRed, Color.BLACK.getGreen, Color.BLACK.getBlue, 200))
@@ -58,8 +60,8 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     private val mousePressOffset: Point = new Point()
 
     override def mouseMoved(e: MouseEvent): Unit = {
-      //      mousePos.setLocation((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
-      mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
+      setMousePos(e)
+      println(e.getPoint + " " + mousePos)
       repaint()
     }
 
@@ -75,6 +77,7 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
 
       offsetX += offsetXTemp.toInt
       offsetY += offsetYTemp.toInt
+      println("OFFSET: " + offsetX + ", " + offsetY)
       repaint()
     }
 
@@ -89,17 +92,20 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
       offsetX += diff._1
       offsetY += diff._2
       // update the point at which to draw the mouse location.
-      mousePos.setLocation((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
+      setMousePos(e)
       repaint()
     }
 
     override def mouseClicked(e: MouseEvent): Unit = {
-      val index = ((e.getPoint.x - offsetX) / SCALE_FACTOR, (e.getPoint.y - offsetY) / SCALE_FACTOR)
-      //      val index = ((e.getPoint.x / SCALE_FACTOR) - offsetX, ((e.getPoint.y / SCALE_FACTOR) - offsetY))
+      val index = (mousePos.x, mousePos.y)
       pixels(index._1)(index._2) = selectedColor
       repaint()
       ClientMain.sendAction(new CanvasActions.PixelChangedAction(index._1, index._2, selectedColor))
       println("Index = (" + index._1 + ")(" + index._2 + ") Clicked: " + e.getPoint)
+    }
+
+    def setMousePos(e: MouseEvent): Unit = {
+      mousePos.setLocation(((e.getPoint.x - offsetX).asInstanceOf[Double] / SCALE_FACTOR).floor, ((e.getPoint.y - offsetY).asInstanceOf[Double] / SCALE_FACTOR).floor)
     }
   }
 
