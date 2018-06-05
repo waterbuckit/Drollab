@@ -82,6 +82,9 @@ class DrawPanel(pixels: Array[Array[Color]]) extends JPanel {
     }
 
     override def mouseWheelMoved(e: MouseWheelEvent): Unit = {
+      if((e.getWheelRotation * -1 > 0 && SCALE_FACTOR >= 70) || (e.getWheelRotation * -1 < 0 && SCALE_FACTOR <= 2)){
+        return
+      }
       //      val previousMidValue = ((getWidth / 2 - offsetX) / SCALE_FACTOR , (getHeight / 2 - offsetY) / SCALE_FACTOR)
       val previousMidValue = ((e.getX - offsetX) / SCALE_FACTOR, (e.getY - offsetY) / SCALE_FACTOR)
       println(previousMidValue + "DETAILS: " + (previousMidValue._1 * SCALE_FACTOR) + "," + (previousMidValue._2 * SCALE_FACTOR))
